@@ -1,6 +1,6 @@
 --local ao            = require('ao')
 local json          = require('json')
-local randomModule  = require('src.Random')()
+local randomModule  = require('src.random')()
 
 Games = Games or {}
 GameCount = GameCount or 0
