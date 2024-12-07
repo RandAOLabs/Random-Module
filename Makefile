@@ -29,4 +29,4 @@ clean:
 # Upload to LuaRocks
 upload:
 	@echo "Uploading $(ROCKSPEC) to LuaRocks..."
-	luarocks upload $(ROCKSPEC) --api-key="your_api_key"
+	luarocks upload $(ROCKSPEC) --api-key="$(LUAROCKS_API_KEY)"
