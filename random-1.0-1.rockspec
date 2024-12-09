@@ -1,7 +1,7 @@
 package = "random"
 version = "1.0-1"
 source = {
-   url = "file://./"
+   url = "https://github.com/RandAOLabs/Random-Module/blob/main/random-1.0.tar.gz"
 }
 description = {
    summary = "RandAO randomness module built for the AO Computer",
