@@ -6,7 +6,8 @@ local function RandomModule()
     -- Use the provided parameters or default to an empty string
     self.PaymentToken       = "OeX1V1xSabUzUtNykWgu9GEaXqacBZawtK12_q5gXaA"
     self.RandomCost         = "100"
-    self.RandomProcess      = "-3Nvdg7g9S7ly-2scR8TtcY3QmIwtl_Gx5PDREJssiA"
+    self.RandomProcess      = "vgH7EXVs6-vxxilja6lkBruHlgOkyqddFVg-BVp3eJc"
+    self.Providers          = "{\"provider_ids\":[\"XUo8jZtUDBFLtp5okR12oLrqIZ4ewNlTpqnqmriihJE\",\"c8Iq4yunDnsJWGSz_wYwQU--O9qeODKHiRdUkQkW2p8\"]}"
 
     -- Define a method to display the configuration (for demonstration)
     function self.showConfig()
@@ -39,13 +40,13 @@ local function RandomModule()
     end
 
     -- Method to send a random request through a token transfer
-    function self.requestRandom(providers, callbackId)
+    function self.requestRandom(callbackId)
         ao.send({
             Target = self.PaymentToken,
             Action = "Transfer",
             Recipient = self.RandomProcess,
             Quantity = self.RandomCost,
-            ["X-Providers"] = providers,
+            ["X-Providers"] = self.Providers,
             ["X-CallbackId"] = callbackId
         }).receive()
     end

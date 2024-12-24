@@ -1,6 +1,6 @@
 --local ao            = require('ao')
 local json          = require('json')
-local randomModule  = require('src.random')()
+local randomModule  = require('random')()
 
 Games = Games or {}
 GameCount = GameCount or 0
@@ -22,12 +22,15 @@ end
 
 function RequestRandomNumber(callbackId)
     print("entered request random")
-    local providers = json.encode({provider_ids = {"ld4ncW8yLSkckjia3cw6qO7silUdEe1nsdiEvMoLg-0"}})
-    randomModule.requestRandom(providers, callbackId)
+    randomModule.requestRandom(callbackId)
 end
 
 function FindGameIdByCallbackId(callbackId)
+    print("entered FindGameIdByCallbackId")
+    print(json.encode(Games))
     for gameId, game in pairs(Games) do
+        print("GameId: " .. gameId)
+
         if game.CallbackId == callbackId then
             return gameId
         end
@@ -63,29 +66,34 @@ Handlers.add(
         print(msg.Data)
         local callbackId, entropy = randomModule.processRandomResponse(msg.From, json.decode(msg.Data))
         print("CalllbackId: " .. callbackId .. " Entropy: " .. entropy)
+        return
+        -- local gameId        = FindGameIdByCallbackId(callbackId)
+        -- return
+        -- print("GameId: " .. gameId)
+        -- local randomNumber  = math.floor(tonumber(entropy) % 10)
+        -- print("Random Number: " .. randomNumber)
+        -- local result        = nil
+        
+        -- print("Random Number: " .. randomNumber)
+        -- -- Retrieve the player's guess
+        -- local guess = Games[gameId].Guess
+        -- print("Guess: " .. guess)
+        -- -- Determine the result
+        -- if (guess == "Higher" and randomNumber >= 5) or (guess == "Lower" and randomNumber < 5) then
+        --     result = "Won"
+        -- else
+        --     result = "Lost"
+        -- end
 
-        local gameId        = FindGameIdByCallbackId(callbackId)
-        local randomNumber  = math.floor(tonumber(entropy) % 10)
-        local result        = nil
-
-        -- Retrieve the player's guess
-        local guess = Games[gameId].Guess
-
-        -- Determine the result
-        if (guess == "Higher" and randomNumber >= 5) or (guess == "Lower" and randomNumber < 5) then
-            result = "Won"
-        else
-            result = "Lost"
-        end
-
-        Games[gameId].Result = result
-        ao.send({
-            Target = Games[gameId].User,
-            Action = "HL-Result",
-            Tags = {
-                Result = result
-            }
-        })
+        -- Games[gameId].Result = result
+        -- print("Game: " .. json.encode(Games[gameId]))
+        -- ao.send({
+        --     Target = Games[gameId].User,
+        --     Action = "HL-Result",
+        --     Tags = {
+        --         Result = result
+        --     }
+        -- })
     end
 )
 
