@@ -40,13 +40,6 @@ To view the status of a random request:
 
 ---
 
-## Error Handling
-
-On error, the RandAO module will return an error response message from the RandAO Random process.  
-*TODO: Fill in the specific error messages here.*
-
----
-
 ## Code Examples
 
 ### Using the RandAO Module
