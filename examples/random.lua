@@ -1,13 +1,14 @@
 -- Define the module as a function that takes parameters
 local function RandomModule()
     -- Create a local table to hold module functions and data
-    local self = {}
+    local self         = {}
 
     -- Use the provided parameters or default to an empty string
-    self.PaymentToken       = "OeX1V1xSabUzUtNykWgu9GEaXqacBZawtK12_q5gXaA"
-    self.RandomCost         = "100"
-    self.RandomProcess      = "vgH7EXVs6-vxxilja6lkBruHlgOkyqddFVg-BVp3eJc"
-    self.Providers          = "{\"provider_ids\":[\"XUo8jZtUDBFLtp5okR12oLrqIZ4ewNlTpqnqmriihJE\",\"c8Iq4yunDnsJWGSz_wYwQU--O9qeODKHiRdUkQkW2p8\"]}"
+    self.PaymentToken  = "5ZR9uegKoEhE9fJMbs-MvWLIztMNCVxgpzfeBVE3vqI"
+    self.RandomCost    = "100"
+    self.RandomProcess = "KbaY8P4h9wdHYKHlBSLbXN_yd-9gxUDxSgBackUxTiQ"
+    self.Providers     =
+    "{\"provider_ids\":[\"XUo8jZtUDBFLtp5okR12oLrqIZ4ewNlTpqnqmriihJE\",\"c8Iq4yunDnsJWGSz_wYwQU--O9qeODKHiRdUkQkW2p8\"]}"
 
     -- Define a method to display the configuration (for demonstration)
     function self.showConfig()
@@ -32,7 +33,7 @@ local function RandomModule()
     function self.generateUUID()
         local random = math.random
         local template = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx"
-    
+
         return string.gsub(template, "[xy]", function(c)
             local v = (c == "x") and random(0, 15) or random(8, 11)
             return string.format("%x", v)
@@ -41,21 +42,23 @@ local function RandomModule()
 
     -- Method to send a random request through a token transfer
     function self.requestRandom(callbackId)
-        ao.send({
+        local send = ao.send({
             Target = self.PaymentToken,
             Action = "Transfer",
             Recipient = self.RandomProcess,
             Quantity = self.RandomCost,
             ["X-Providers"] = self.Providers,
             ["X-CallbackId"] = callbackId
-        }).receive()
+        })
+        return send
     end
 
     -- Method to process Random ResponseData
     function self.processRandomResponse(from, data)
         assert(self.isRandomProcess(from), "Failure: message is not from RandomProcess")
-        local callbackId    =  data.callbackId
-        local entropy       =  data.entropy
+
+        local callbackId = data["callbackId"]
+        local entropy    = tonumber(data["entropy"])
         return callbackId, entropy
     end
 
@@ -70,6 +73,7 @@ local function RandomModule()
         print("Results: " .. tostring(results))
         return results
     end
+
     -- Return the table so the module can be used
     return self
 end
