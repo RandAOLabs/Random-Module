@@ -146,18 +146,32 @@ Handlers.add(
 )
 
 Handlers.add(
-    'View Game',
-    Handlers.utils.hasMatchingTag('Action', 'View-Game'),
+    'View Pull',
+    Handlers.utils.hasMatchingTag('Action', 'View-Pull'),
     function(msg)
-        print("entered view game")
-        local gameId = msg.Tags.GameId
-        print(json.encode(Games[gameId]))
+        print("entered view pull")
+        local pullId = tonumber(msg.Tags.PullId)
+        print(json.encode(RafflePulls[pullId]))
         ao.send({
             Target = msg.From,
-            Action = "View Game Response",
-            Data = json.encode(Games[gameId])
+            Action = "View-Pull-Response",
+            Data = json.encode(RafflePulls[pullId])
         })
     end
 )
 
-print("Loaded HighOrLow.lua")
+Handlers.add(
+    'View Pulls',
+    Handlers.utils.hasMatchingTag('Action', 'View-Pulls'),
+    function(msg)
+        print("entered view pulls")
+        print(json.encode(RafflePulls))
+        ao.send({
+            Target = msg.From,
+            Action = "View-Pulls-Response",
+            Data = json.encode(RafflePulls)
+        })
+    end
+)
+
+print("Loaded Raffle.lua")
