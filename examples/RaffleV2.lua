@@ -22,8 +22,9 @@ LastRaffleTime = LastRaffleTime or {}
 -- so we know which user to associate the random response with
 CallbackToUser = CallbackToUser or {}
 
-RaffleWhitelist = RaffleWhitelist or {
-    ["ld4ncW8yLSkckjia3cw6qO7silUdEe1nsdiEvMoLg-0"] = true
+RaffleWhitelist = {
+    ["ld4ncW8yLSkckjia3cw6qO7silUdEe1nsdiEvMoLg-0"] = true,
+    ["9U_MDLfzf-sdww7d7ydaApDiQz3nyHJ4kTS2-9K4AGA"] = true
 }
 
 -- Utility function to get or initialize a user's raffle data
@@ -175,8 +176,8 @@ Handlers.add(
             -- Update the last time the user sent a raffle request
             print("Last time: " .. lastTime .. " Current time: " .. currentTimeSec .. " Elapsed: " .. elapsed)
             -- Check if 5 minutes have passed since last pull
-            if elapsed < 300 then
-                local timeRemaining = 300 - elapsed
+            if elapsed < 60 then
+                local timeRemaining = 60 - elapsed
                 print("User " .. userId .. " must wait. " .. timeRemaining .. " seconds left.")
 
                 ao.send({
@@ -218,8 +219,9 @@ Handlers.add(
             return
         end
         local userData = GetUserRaffleData(user)
-
         local pullId = FindPullIdByCallbackId(userData, callbackId)
+        local userId = userData.RafflePulls[pullId].User
+
         print("PullId: " .. tostring(pullId))
 
         if not pullId then
@@ -230,10 +232,10 @@ Handlers.add(
         -- Example usage:
         local randomNumber   = math.floor(tonumber(entropy) % 10)
         print("Random Number: " .. randomNumber)
-        local winningIndex   = math.floor(tonumber(entropy) % userData.RaffleEntryCount) -- 0-based?
-        
+        --local winningIndex   = math.floor(tonumber(entropy) % userData.RaffleEntryCount) -- 0-based?
+
         -- Adjust as needed. For example, if your code expects 1-based indexing:
-        -- local winningIndex = math.floor(tonumber(entropy) % userData.RaffleEntryCount) + 1
+        local winningIndex = math.floor(tonumber(entropy) % userData.RaffleEntryCount) + 1
 
         print("Winning Index: " .. winningIndex)
 
@@ -250,10 +252,13 @@ Handlers.add(
         end
 
         ao.send({
-            Target = userData.RafflePulls[pullId].User,
+            Target = userId,
             Action = "Raffle-Winner",
             Tags   = {
-                Winner = winner
+                Winner = winner,
+                CallbackId = callbackId,
+                PullId = tostring(pullId),
+                UserId = userId
             }
         })
     end
@@ -264,7 +269,7 @@ Handlers.add(
     Handlers.utils.hasMatchingTag('Action', 'View-Pull'),
     function(msg)
         print("entered view pull")
-        local user = msg.From
+        local user = msg.Tags.UserId or msg.From
         local data = GetUserRaffleData(user)
 
         local pullId = tonumber(msg.Tags.PullId)

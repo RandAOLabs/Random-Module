@@ -8,7 +8,7 @@ local function RandomModule()
     self.RandomCost    = "100"
     self.RandomProcess = "1dnDvaDRQ7Ao6o1ohTr7NNrN5mp1CpsXFrWm3JJFEs8"
     self.Providers     =
-    "{\"provider_ids\":[\"XUo8jZtUDBFLtp5okR12oLrqIZ4ewNlTpqnqmriihJE\",\"c8Iq4yunDnsJWGSz_wYwQU--O9qeODKHiRdUkQkW2p8\"]}"
+    "{\"provider_ids\":[\"XUo8jZtUDBFLtp5okR12oLrqIZ4ewNlTpqnqmriihJE\"]}"
 
     -- Define a method to display the configuration (for demonstration)
     function self.showConfig()
