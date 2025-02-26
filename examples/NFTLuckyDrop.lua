@@ -1,5 +1,6 @@
 local ao           = require('ao')
 local randomModule = require('randomTest')()
+local json         = require('json')
 
 -- GLOBALS:
 CallbackDetails    = CallbackDetails or {}   -- map callbackId -> { user, min, max }
@@ -81,7 +82,7 @@ Handlers.add(
   Handlers.utils.hasMatchingTag("Action", "Credit-Notice"),
   function(msg)
     print("credit-notice")
-    
+
     if msg.From == "5ZR9uegKoEhE9fJMbs-MvWLIztMNCVxgpzfeBVE3vqI" then
       print("Funded for requests")
       return
@@ -108,6 +109,43 @@ Handlers.add(
     -- Request a random number
     randomModule.requestRandom(callbackId)
   end
+)
+
+Handlers.add(
+    "ViewReceivedItems",
+    Handlers.utils.hasMatchingTag("Action", "View-Received-Items"),
+    function(msg)
+        print("Entered ViewReceivedItems")
+
+        local userId = msg.Tags.UserId or msg.From
+
+        -- Check if user has received anything
+        local logs = UserGeneratedLogs[userId]
+        if not logs or #logs == 0 then
+            print("No received items for user: " .. userId)
+            ao.send({
+                Target = msg.From,
+                Action = "ViewReceivedItems-Response",
+                Data   = json.encode({
+                    userId      = userId,
+                    received    = {},
+                    message     = "You have not received any items yet."
+                })
+            })
+            return
+        end
+
+        -- Send back the list of received items
+        print("Returning received items for user: " .. userId)
+        ao.send({
+            Target = msg.From,
+            Action = "ViewReceivedItems-Response",
+            Data   = json.encode({
+                userId   = userId,
+                received = logs  -- Includes { number, lucky } for each entry
+            })
+        })
+    end
 )
 
 print("Loaded NFTLuckyDrop.lua")

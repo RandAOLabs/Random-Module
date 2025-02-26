@@ -1,6 +1,6 @@
 local ao           = require('ao')
 local json         = require('json')
-local randomModule = require('random')()
+local randomModule = require('randomTest')()
 
 -- GLOBALS:
 CallbackDetails    = CallbackDetails or {}   -- map callbackId -> { user, min, max }
@@ -65,7 +65,7 @@ Handlers.add(
 
         -- Read the requested min/max from the message tags (default to 1..10)
         local minVal = tonumber(msg.Tags.Minimum) or 1
-        local maxVal = tonumber(msg.Tags.Maximum) or 10
+        local maxVal = tonumber(msg.Tags.Maximum) or 100
         print("User " .. user .. " requested random range: " .. minVal .. " to " .. maxVal)
 
         -- Generate unique callbackId
@@ -197,4 +197,42 @@ Handlers.add(
     end
 )
 
-print("Loaded RandomNumber.lua with logging and 'ViewLastRandom' handler including timestamps.")
+Handlers.add(
+    "ViewAllRandom",
+    Handlers.utils.hasMatchingTag("Action", "View-All-Random"),
+    function(msg)
+        print("Entered ViewAllRandom")
+
+        -- Determine which user we're checking: either specified, or the message sender
+        local userId = msg.Tags.UserId or msg.From
+
+        -- Retrieve the logs for this user
+        local logs = UserGeneratedLogs[userId]
+        if not logs or #logs == 0 then
+            print("No logs for user: " .. userId)
+            ao.send({
+                Target = msg.From,
+                Action = "ViewAllRandom-Response",
+                Data   = json.encode({
+                    userId  = userId,
+                    logs    = {},
+                    message = "No random numbers found for this user."
+                })
+            })
+            return
+        end
+
+        -- If logs exist, return the entire array
+        print("Returning all random entries for user: " .. userId)
+        ao.send({
+            Target = msg.From,
+            Action = "ViewAllRandom-Response",
+            Data   = json.encode({
+                userId = userId,
+                logs   = logs
+            })
+        })
+    end
+)
+
+print("Loaded RandomNumber.lua")
