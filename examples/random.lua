@@ -1,20 +1,23 @@
 -- Define the module as a function that takes parameters
-local function RandomModule()
+local function RandomModule(json)
+
     -- Create a local table to hold module functions and data
     local self         = {}
 
-    -- Use the provided parameters or default to an empty string
+    -- State variables
+    self.RandAODNS     = "byaUfQzuojukjWPIQd9-qpGPrO9Nrlqqfib4879LyCE"
     self.PaymentToken  = "5ZR9uegKoEhE9fJMbs-MvWLIztMNCVxgpzfeBVE3vqI"
     self.RandomCost    = "100"
     self.RandomProcess = "1dnDvaDRQ7Ao6o1ohTr7NNrN5mp1CpsXFrWm3JJFEs8"
     self.Providers     =
     "{\"provider_ids\":[\"XUo8jZtUDBFLtp5okR12oLrqIZ4ewNlTpqnqmriihJE\",\"c8Iq4yunDnsJWGSz_wYwQU--O9qeODKHiRdUkQkW2p8\"]}"
 
-    -- Define a method to display the configuration (for demonstration)
-    function self.showConfig()
-        print("PaymentToken: " .. self.PaymentToken)
-        print("RandomCost: " .. self.RandomCost)
-        print("RandomProcess: " .. self.RandomProcess)
+    -- Method to request configuration variables from DNS
+    function self.updateConfig()
+        return ao.send({
+            Target = self.RandAODNS,
+            Action = "Records"
+        })
     end
 
     -- Method to set the configuration variables
@@ -22,6 +25,34 @@ local function RandomModule()
         self.PaymentToken = paymentToken
         self.RandomCost = randomCost
         self.RandomProcess = randomProcess
+    end
+
+    function self.initialize()
+        print("Initializing Random Module")
+        Handlers.add(
+            "Records-Notice",
+            Handlers.utils.hasMatchingTag("Action", "Records-Notice"),
+            function(msg)
+                print("entered records")
+                print(json.encode(msg.Data))
+                local decodedData       = json.decode(msg.Data)
+
+                local randomProcess     = decodedData.randomprocess.transactionId
+                local rngToken          = decodedData.rngtoken.transactionId
+
+                self.setConfig(rngToken, self.RandomCost, randomProcess)
+                print("RNG Token: " .. rngToken)
+                print("RNG Process: " .. randomProcess)
+            end
+        )
+        self.updateConfig()
+    end
+
+    -- Define a method to display the configuration (for demonstration)
+    function self.showConfig()
+        print("PaymentToken: " .. self.PaymentToken)
+        print("RandomCost: " .. self.RandomCost)
+        print("RandomProcess: " .. self.RandomProcess)
     end
 
     -- Method to ensure a process is the RandomProcess
