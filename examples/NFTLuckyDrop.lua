@@ -1,5 +1,5 @@
 local ao           = require('ao')
-local randomModule = require('randomTest')()
+local randomModule = require('random')()
 local json         = require('json')
 
 -- GLOBALS:

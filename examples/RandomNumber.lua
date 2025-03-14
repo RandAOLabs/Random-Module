@@ -1,6 +1,6 @@
 local ao           = require('ao')
 local json         = require('json')
-local randomModule = require('randomTest')()
+local randomModule = require('random')()
 
 -- GLOBALS:
 CallbackDetails    = CallbackDetails or {}   -- map callbackId -> { user, min, max }

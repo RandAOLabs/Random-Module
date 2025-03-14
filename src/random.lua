@@ -8,9 +8,9 @@ local function RandomModule(json)
     self.RandAODNS     = "byaUfQzuojukjWPIQd9-qpGPrO9Nrlqqfib4879LyCE"
     self.PaymentToken  = "5ZR9uegKoEhE9fJMbs-MvWLIztMNCVxgpzfeBVE3vqI"
     self.RandomCost    = "100"
-    self.RandomProcess = "1dnDvaDRQ7Ao6o1ohTr7NNrN5mp1CpsXFrWm3JJFEs8"
+    self.RandomProcess = "SmP0pvsNsNlXnXg4z29TNQWG7LtIKBdB-2hqIaL8AxY"
     self.Providers     =
-    "{\"provider_ids\":[\"XUo8jZtUDBFLtp5okR12oLrqIZ4ewNlTpqnqmriihJE\",\"c8Iq4yunDnsJWGSz_wYwQU--O9qeODKHiRdUkQkW2p8\"]}"
+    "{\"provider_ids\":[\"XUo8jZtUDBFLtp5okR12oLrqIZ4ewNlTpqnqmriihJE\",\"c8Iq4yunDnsJWGSz_wYwQU--O9qeODKHiRdUkQkW2p8\",\"Sr3HVH0Nh6iZzbORLpoQFOEvmsuKjXsHswSWH760KAk\"]}"
 
     -- Method to request configuration variables from DNS
     function self.updateConfig()
@@ -27,6 +27,7 @@ local function RandomModule(json)
         self.RandomProcess = randomProcess
     end
 
+    -- Function to initialize the module with current DNS configuration 
     function self.initialize()
         print("Initializing Random Module")
         Handlers.add(
@@ -71,8 +72,20 @@ local function RandomModule(json)
         end)
     end
 
-    -- Method to send a random request through a token transfer
+    -- Function to use the round robin proiders instead of provided list
     function self.requestRandom(callbackId)
+        local send = ao.send({
+            Target = self.PaymentToken,
+            Action = "Transfer",
+            Recipient = self.RandomProcess,
+            Quantity = self.RandomCost,
+            ["X-CallbackId"] = callbackId
+        })
+        return send
+    end
+
+    -- Method to send a random request through a token transfer
+    function self.requestRandomFromProviders(callbackId)
         local send = ao.send({
             Target = self.PaymentToken,
             Action = "Transfer",

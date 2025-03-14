@@ -1,9 +1,13 @@
 --local ao           = require('ao')
 local json         = require('json')
-local randomModule = require('random')()
+local randomModule = require('random')(json)
 
 Games              = Games or {}
 GameCount          = GameCount or 0
+
+function Init()
+    randomModule.initialize()
+end
 
 function CreateGame(user, guess)
     print("CreateGame called with user: " .. tostring(user) .. ", guess: " .. tostring(guess))
