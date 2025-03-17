@@ -52,12 +52,48 @@ To view the status of a random request:
 
 ### Using the RandAO Module
 
-*TODO: Provide examples of how to use `request_random` and `view_random` here.*
+Setting up the module:
+```lua
+  local randomModule = require('random')(json)
+  randomModule.init()
+```
 
-### Required Code for Integration
+Setting custom provider list:
+```lua
+  local providerList = {
+      "XUo8jZtUDBFLtp5okR12oLrqIZ4ewNlTpqnqmriihJE",
+      "vJnpGjZrOetokWpgV50-xBxanCGP1N9Bjtj-kH1E_Ac",
+      "oFmKGpZpBB8TKI3qMyaJduRqe9mJ3kb98lS9xnfsFTA"
+  }
+  randomModule.setProviderList(providerList)
+```
+Generating a unique callbackId:
+```lua
+  local callbackId = randomModule.generateUUID()
+```
 
-*TODO: Include snippets for integrating the module into user projects.*
+Requesting random from default provider pool:
+```lua
+  randomModule.requestRandom(callbackId)
+```
 
+Requesting random from custom provider pool:
+```lua
+  randomModule.requestRandomFromProviders(callbackId)
+```
+
+Basic handler for receiving random responses:
+```lua
+  Handlers.add(
+      "RandomResponse",
+      Handlers.utils.hasMatchingTag("Action", "RandomResponse"),
+      function(msg)
+        -- Process the random module’s response
+        local callbackId, entropy = randomModule.processRandomResponse(msg.From, msg.Data)
+        print("CallbackId: " .. tostring(callbackId) .. ", Entropy: " .. tostring(entropy))
+      end
+  )
+```
 ---
 
 ## License
