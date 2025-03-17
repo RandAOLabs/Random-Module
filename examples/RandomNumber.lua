@@ -1,15 +1,25 @@
 local ao           = require('ao')
 local json         = require('json')
-local randomModule = require('random')()
+local randomModule = require('random')(json)
 
 -- GLOBALS:
 CallbackDetails    = CallbackDetails or {}   -- map callbackId -> { user, min, max }
 LastRequestTime    = LastRequestTime or {}   -- map userId -> last time (in seconds) they requested a random
 UserGeneratedLogs  = UserGeneratedLogs or {} -- map userId -> array of {number, timestamp}
 
-Whitelist = Whitelist or {
-    ["ld4ncW8yLSkckjia3cw6qO7silUdEe1nsdiEvMoLg-0"] = true
+Whitelist = {
+    ["ld4ncW8yLSkckjia3cw6qO7silUdEe1nsdiEvMoLg-0"] = true,
+    [ao.id] = true
 }
+
+function UpdateProviderList()
+    local providerList = {
+        "XUo8jZtUDBFLtp5okR12oLrqIZ4ewNlTpqnqmriihJE",
+        "vJnpGjZrOetokWpgV50-xBxanCGP1N9Bjtj-kH1E_Ac",
+        "oFmKGpZpBB8TKI3qMyaJduRqe9mJ3kb98lS9xnfsFTA"
+    }
+    randomModule.setProviderList(providerList)
+end
 
 function GetTimeDisplay(totalSeconds)
     local seconds = math.floor(totalSeconds % 60)
@@ -82,7 +92,7 @@ Handlers.add(
         print("Generated CallbackId: " .. tostring(callbackId))
 
         -- Request the random from the random module
-        randomModule.requestRandom(callbackId)
+        randomModule.requestRandomFromProviders(callbackId)
         print("Requested random for CallbackId: " .. callbackId)
 
         -- Let the user know we've started the request

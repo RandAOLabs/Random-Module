@@ -6,7 +6,7 @@
 
 local ao           = require('ao')
 local json         = require('json')
-local randomModule = require('random')()
+local randomModule = require('random')(json)
 
 -- This table will map: userId -> {
 --    RafflePullCount  = <number>,

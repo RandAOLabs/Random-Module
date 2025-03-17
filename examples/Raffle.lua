@@ -1,6 +1,7 @@
 --local ao           = require('ao')
 local json         = require('json')
-local randomModule = require('random')()
+local randomModule = require('random')(json)
+
 RafflePullCount          = RafflePullCount or 0
 RafflePulls              = RafflePulls or {}
 RaffleEntryList          = RaffleEntryList or {}
