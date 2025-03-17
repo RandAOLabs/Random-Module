@@ -88,6 +88,19 @@ Requesting random from custom provider pool:
 ```lua
   randomModule.requestRandomFromProviders(callbackId)
 ```
+
+Basic handler for receiving random responses:
+```lua
+  Handlers.add(
+      "RandomResponse",
+      Handlers.utils.hasMatchingTag("Action", "RandomResponse"),
+      function(msg)
+        -- Process the random module’s response
+        local callbackId, entropy = randomModule.processRandomResponse(msg.From, msg.Data)
+        print("CallbackId: " .. tostring(callbackId) .. ", Entropy: " .. tostring(entropy))
+      end
+  )
+```
 ---
 
 ## License
