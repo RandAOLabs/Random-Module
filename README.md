@@ -16,27 +16,35 @@ The **RandAO Module** is a pure Lua library designed to enable seamless interact
 
 ## Installation
 
-*TODO: Add installation instructions here.*
+Add the `random.lua` file to your project directory. You can then import the module and require it in your code passing the `json` library as an argument:
+```lua
+local randomModule = require('random')(json)
+```
+You can then use the `randomModule.init()` function to initialize the module with the most recent configuration.
 
 ---
 
 ## Usage
 
 ### Request Random
-To request random values:
-- Call `request_random` with a `providers` parameter, which is a JSON-encoded string of the random providers you wish to include in the randomness generation process.
-- This action deducts **100 RandAO tokens** from the caller's account.
+To request random values from the active provider pool:
+- Call `requestRandom` with a `callbackId` parameter.
 
+To request random with your own provider pool:
+- Call `setProviderList` with a list of provider IDs as the `providerList` parameter to set your provider list pool.
+- Call `requestRandomFromProviders` with a `callbackId` parameter, this uses the set `Providers` list to request the value, allowing more control for the customer.
+
+These actions deduct **100 RandAO tokens** from the caller's account.
 ### View Random
 To view the status of a random request:
-- Call `view_random` with the `callback_id` you received from your `request_random` action.
+- Call `viewRandomStatus` with the `callbackId` you received from your `requestRandom` action.
 - Possible statuses:
   - **PENDING**: The randomness request is in progress.
   - **CACKING**: The randomness request is being computed.
   - **SUCCESS**: The randomness request has been completed.
   - **FAILED**: The randomness request failed.
 
-> The expected time to complete a randomness request is approximately **under 2 seconds**.
+> The expected time to complete a randomness request is approximately **10 seconds** and dropping fast as AO network improvements are made.
 
 ---
 
