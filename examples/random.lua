@@ -20,9 +20,9 @@ local function RandomModule(json)
     --   Providers      : JSON-encoded list of provider IDs for round-robin usage
     ----------------------------------------------------------------------------
     self.RandAODNS     = "byaUfQzuojukjWPIQd9-qpGPrO9Nrlqqfib4879LyCE"
-    self.PaymentToken  = "kUnKIPp7XS4pBsy1qy7j3S-JJ0ChZ4utbZ-IPxhw_W0"
+    self.PaymentToken  = "rPpsRk9Rm8_SJ1JF8m9_zjTalkv9Soaa_5U0tYUloeY"
     self.RandomCost    = "100"
-    self.RandomProcess = "uAifLmOQbTDppoxp1fQUctDFTE6XLVCADfX9-CmjrwQ"
+    self.RandomProcess = "ZBSQD_GeGUdQAiixxKy9Ag1rgJvJ_yFUGExwjW6mA7E"
     self.Providers     =
     "{\"provider_ids\":[\"XUo8jZtUDBFLtp5okR12oLrqIZ4ewNlTpqnqmriihJE\",\"c8Iq4yunDnsJWGSz_wYwQU--O9qeODKHiRdUkQkW2p8\",\"Sr3HVH0Nh6iZzbORLpoQFOEvmsuKjXsHswSWH760KAk\"]}"
 
