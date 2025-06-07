@@ -18,7 +18,7 @@ UserSweepstakesData = UserSweepstakesData or {}
 
 LastSweepstakesTime = LastSweepstakesTime or {}
 
-PaymentToken  = "rPpsRk9Rm8_SJ1JF8m9_zjTalkv9Soaa_5U0tYUloeY" -- xU9zFkq3X2ZQ6olwNVvr1vUWIjc3kXTWr7xKQD6dh10
+PaymentToken  = "5ZR9uegKoEhE9fJMbs-MvWLIztMNCVxgpzfeBVE3vqI" -- xU9zFkq3X2ZQ6olwNVvr1vUWIjc3kXTWr7xKQD6dh10
 Cost          = 100000000000
 
 -- This table maps callbackId -> userId,
