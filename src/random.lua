@@ -24,7 +24,7 @@ local function RandomModule(json)
     self.RandomCost    = "1000000000"
     self.RandomProcess = "lgqfjApWiekA_O3Svv7tNJU1Ol3eZD1_JzWKZ7E4ek8"
     self.Providers     =
-    "{\"provider_ids\":[\"QkO9hGotfx1cd6Nrs4jdnNt595cNS0ck9VUOCfUrPAw\"]}"
+    "{\"provider_ids\":[\"XUo8jZtUDBFLtp5okR12oLrqIZ4ewNlTpqnqmriihJE\",\"c8Iq4yunDnsJWGSz_wYwQU--O9qeODKHiRdUkQkW2p8\",\"Sr3HVH0Nh6iZzbORLpoQFOEvmsuKjXsHswSWH760KAk\"]}"
 
     ----------------------------------------------------------------------------
     -- initialize()
