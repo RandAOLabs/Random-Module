@@ -19,10 +19,10 @@ local function RandomModule(json)
     --   RandomProcess  : Transaction ID / Process that fulfills random requests
     --   Providers      : JSON-encoded list of provider IDs for round-robin usage
     ----------------------------------------------------------------------------
-    self.RandAODNS     = "byaUfQzuojukjWPIQd9-qpGPrO9Nrlqqfib4879LyCE"
-    self.PaymentToken  = "5ZR9uegKoEhE9fJMbs-MvWLIztMNCVxgpzfeBVE3vqI"
-    self.RandomCost    = "100"
-    self.RandomProcess = "XAYnAxAEFhVRwhUyFKZmkeTiazIZClQIELLw6h44Ngc"
+    self.RandAODNS     = "RAYZTOwekImmk9YawBDkzQHSXmJXxjsJ-QuWHRqAgLY"
+    self.PaymentToken  = "rPpsRk9Rm8_SJ1JF8m9_zjTalkv9Soaa_5U0tYUloeY"
+    self.RandomCost    = "1000000000"
+    self.RandomProcess = "lgqfjApWiekA_O3Svv7tNJU1Ol3eZD1_JzWKZ7E4ek8"
     self.Providers     =
     "{\"provider_ids\":[\"XUo8jZtUDBFLtp5okR12oLrqIZ4ewNlTpqnqmriihJE\",\"c8Iq4yunDnsJWGSz_wYwQU--O9qeODKHiRdUkQkW2p8\",\"Sr3HVH0Nh6iZzbORLpoQFOEvmsuKjXsHswSWH760KAk\"]}"
 
@@ -42,10 +42,10 @@ local function RandomModule(json)
                 print(json.encode(msg.Data))
                 local decodedData       = json.decode(msg.Data)
 
-                local randomProcess     = decodedData.randomprocess.transactionId
-                local rngToken          = decodedData.rngtoken.transactionId
+                local randomProcess     = decodedData.api.transactionId
+                local rngToken          = decodedData.rng.transactionId
 
-                self.setConfig(rngToken, self.RandomCost, randomProcess)
+                self.setConfig(PaymentToken, self.RandomCost, randomProcess)
                 print("RNG Token: " .. rngToken)
                 print("RNG Process: " .. randomProcess)
             end
@@ -151,7 +151,7 @@ local function RandomModule(json)
             Action = "Transfer",
             Recipient = self.RandomProcess,
             Quantity = self.RandomCost,
-            ["X-CallbackId"] = callbackId
+            ["X-CallbackId"] = callbackId,
         })
         return send
     end
@@ -221,6 +221,7 @@ local function RandomModule(json)
         print("Results: " .. tostring(results))
         return results
     end
+    -- self.initialize()
 
     -- Return the table so the module can be used
     return self
