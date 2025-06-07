@@ -152,7 +152,6 @@ local function RandomModule(json)
             Recipient = self.RandomProcess,
             Quantity = self.RandomCost,
             ["X-CallbackId"] = callbackId,
-            ["X-Providers"] = self.Providers,
         })
         return send
     end
