@@ -92,7 +92,7 @@ Handlers.add(
         print("Generated CallbackId: " .. tostring(callbackId))
 
         -- Request the random from the random module
-        randomModule.requestRandomFromProviders(callbackId)
+        randomModule.requestRandom(callbackId)
         print("Requested random for CallbackId: " .. callbackId)
 
         -- Let the user know we've started the request
