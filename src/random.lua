@@ -19,7 +19,7 @@ local function RandomModule(json)
     --   RandomProcess  : Transaction ID / Process that fulfills random requests
     --   Providers      : JSON-encoded list of provider IDs for round-robin usage
     ----------------------------------------------------------------------------
-    self.RandAODNS     = "RAYZTOwekImmk9YawBDkzQHSXmJXxjsJ-QuWHRqAgLY"
+    self.RandAOSubscriptionManager     = "zEZB5ORBX7A8_yZIzmhTBsPL8rvo14qXivBw8IxNKoM"
     self.PaymentToken  = "rPpsRk9Rm8_SJ1JF8m9_zjTalkv9Soaa_5U0tYUloeY"
     self.RandomCost    = "1000000000"
     self.RandomProcess = "lgqfjApWiekA_O3Svv7tNJU1Ol3eZD1_JzWKZ7E4ek8"
@@ -35,32 +35,32 @@ local function RandomModule(json)
     function self.initialize()
         print("Initializing Random Module")
         Handlers.add(
-            "Records-Notice",
-            Handlers.utils.hasMatchingTag("Action", "Records-Notice"),
+            "Update-Random-Config",
+            Handlers.utils.hasMatchingTag("Action", "Update-Random-Config"),
             function(msg)
                 print("entered records")
-                print(json.encode(msg.Data))
-                local decodedData       = json.decode(msg.Data)
 
-                local randomProcess     = decodedData.api.transactionId
-                local rngToken          = decodedData.rng.transactionId
+                local randomProcess     = msg.Tags.RandomProcess
+                local rngToken          = msg.Tags.RNG
 
-                self.setConfig(PaymentToken, self.RandomCost, randomProcess)
+                self.setConfig(rngToken, self.RandomCost, randomProcess)
                 print("RNG Token: " .. rngToken)
                 print("RNG Process: " .. randomProcess)
             end
         )
+        table.insert(ao.authorities, "--TKpHlFyOR7aLqZ-uR3tqtmgQisllKaRVctMlwvPwE")
+
         self.updateConfig()
     end
 
     ----------------------------------------------------------------------------
     -- updateConfig()
-    -- Sends a request to retrieve new configuration records from the RandAODNS.
+    -- Sends a request to retrieve new configuration records from the RandAOSubscriptionManager.
     ----------------------------------------------------------------------------
     function self.updateConfig()
         return ao.send({
-            Target = self.RandAODNS,
-            Action = "Records"
+            Target = self.RandAOSubscriptionManager,
+            Action = "Subscribe"
         })
     end
 
@@ -151,7 +151,7 @@ local function RandomModule(json)
             Action = "Transfer",
             Recipient = self.RandomProcess,
             Quantity = self.RandomCost,
-            ["X-CallbackId"] = callbackId,
+            ["X-CallbackId"] = callbackId
         })
         return send
     end
@@ -221,8 +221,9 @@ local function RandomModule(json)
         print("Results: " .. tostring(results))
         return results
     end
-    -- self.initialize()
-
+    
+    self.initialize()
+        
     -- Return the table so the module can be used
     return self
 end
