@@ -133,6 +133,55 @@ local function RandomModule(json)
         end)
     end
 
+
+    ----------------------------------------------------------------------------
+    -- prepayForRandom(units)
+    -- Sends a token transfer to the configured RandomProcess to prepay for X 
+    -- number of future random requests
+    --
+    -- Arguments:
+    --   units : Number of random units to purchase
+    ----------------------------------------------------------------------------
+    function self.prepayForRandom(units)
+        local quantity = units * tonumber(self.RandomCost)
+
+        local send = ao.send({
+            Target = self.PaymentToken,
+            Action = "Transfer",
+            Recipient = self.RandomProcess,
+            Quantity = tostring(quantity),
+            ["X-Prepayment"] = "true",
+        })
+        return send
+    end
+
+    ----------------------------------------------------------------------------
+    -- redeemRandomCredit(callbackId, providerList)
+    -- Requests random utilizing prepaid credits with callbackid and optionally a provider providerlist
+    --
+    -- Arguments:
+    --   callbackId : Unique identifier for tracking the random request
+    --   providerList : List of providers to use for entropy generation
+    ----------------------------------------------------------------------------
+    function self.redeemRandomCredit(callbackId, providerList)
+        if providerList == nil then
+            local send = ao.send({
+                Target = self.RandomProcess,
+                Action = "Redeem-Random-Credit",
+                CallbackId = callbackId,
+            })
+            return send
+        else
+            local send = ao.send({
+                Target = self.RandomProcess,
+                Action = "Redeem-Random-Credit",
+                CallbackId = callbackId,
+                ["X-Providers"] = providerList
+            })
+            return send
+        end
+    end
+
     ----------------------------------------------------------------------------
     -- requestRandom(callbackId)
     -- Sends a token transfer to the configured RandomProcess to request entropy,
@@ -141,15 +190,12 @@ local function RandomModule(json)
     --
     -- Arguments:
     --   callbackId : Unique identifier for tracking the random request
-    --
-    -- Returns:
-    --   The result of ao.send (typically a receipt or reference)
     ----------------------------------------------------------------------------
     function self.requestRandom(callbackId)
         local send = ao.send({
-            Target = self.PaymentToken,
+            Target = "rPpsRk9Rm8_SJ1JF8m9_zjTalkv9Soaa_5U0tYUloeY",
             Action = "Transfer",
-            Recipient = self.RandomProcess,
+            Recipient = "lgqfjApWiekA_O3Svv7tNJU1Ol3eZD1_JzWKZ7E4ek8",
             Quantity = self.RandomCost,
             ["X-CallbackId"] = callbackId
         })
@@ -164,9 +210,6 @@ local function RandomModule(json)
     --
     -- Arguments:
     --   callbackId : Unique identifier for tracking the random request
-    --
-    -- Returns:
-    --   The result of ao.send (receipt or reference)
     ----------------------------------------------------------------------------
     function self.requestRandomFromProviders(callbackId)
         local send = ao.send({
