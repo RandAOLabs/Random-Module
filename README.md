@@ -74,21 +74,14 @@ Sends a token transfer to the configured `RandomProcess` to pre-pay for a specif
   - Computes `quantity = units * RandomCost` (on-chain value).  
   - Sends a `"Transfer"` action to `RandomProcess` with header `X-Prepayment = "true"`.  
 
-**Example**:
-```lua
--- Prepay 5 future random requests:
-local result = randomModule.prepayForRandom(5)
-print("Prepayment tx:", result.TxId)
-```
-
 ---
 
 ### 4. Redeem Random Credit
 
 ```lua
-randomModule.redeemRandomCredit(callbackId, providerList)
--- or
 randomModule.redeemRandomCredit(callbackId)
+-- or
+randomModule.redeemRandomCredit(callbackId, providerList)
 ```
 
 Uses prepaid randomness credits to make a randomness request.
