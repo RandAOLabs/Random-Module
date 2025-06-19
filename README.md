@@ -1,99 +1,152 @@
 # RandAO Module
 
-The **RandAO Module** is a pure Lua library designed to enable seamless interaction with the RandAO randomness protocol. This module provides two core functionalities: 
+The **RandAO Module** is a pure Lua library designed to enable seamless interaction with the RandAO randomness protocol. This module provides five core functionalities:
 
-1. **Request Random**: Send a request for random values by transferring tokens to the randomness protocol.
-2. **View Random**: Check the status of a previously requested random value using a callback ID.
+1. **Request Random**: Send a request for fresh random values by transferring tokens to the randomness protocol.  
+2. **Request Random from Providers**: Send a request for random values using a custom list of entropy providers.  
+3. **Prepay for Randomness Credits**: Purchase “units” of randomness in advance, so future random requests draw from prepaid credit.  
+4. **Redeem Random Credit**: Use prepaid randomness credits to make a request, with optional provider selection.  
+5. **View Random Status**: Check the status of a previously requested random value using a callback ID.  
 
 ---
 
 ## Features
-- **Pure Lua**: No external dependencies required—built specifically for the AO platform.
-- **Token-Backed Randomness**: Utilizes RandAO tokens to securely generate random values.
-- **Asynchronous Status Tracking**: Retrieve the status of your randomness request with ease.
+- **Pure Lua**: No external dependencies required—built specifically for the AO platform.  
+- **Token-Backed Randomness**: Utilizes RandAO tokens to securely generate random values.  
+- **Prepaid Credits**: Pay up front for multiple requests to streamline batching and reduce on-the-fly token transfers.  
+- **Optional Provider Control**: Choose which registered entropy providers contribute to your random result.  
+- **Asynchronous Status Tracking**: Retrieve the status of your randomness request with ease.  
 
 ---
 
 ## Installation
 
-Add the `random.lua` file to your project directory. You can then import the module and require it in your code passing the `json` library as an argument:
+Add the `random.lua` file to your project directory. You can then import the module and require it in your code, passing in the `json` library as an argument:
+
 ```lua
 local randomModule = require('random')(json)
+randomModule.init()
 ```
-You can then use the `randomModule.init()` function to initialize the module with the most recent configuration.
+
+After initialization, the module reads your on-chain configuration (token address, cost per unit, process ID, etc.) and exposes the functions below.
 
 ---
 
 ## Usage
 
-### Request Random
-To request random values from the active provider pool:
-- Call `requestRandom` with a `callbackId` parameter.
+### 1. Request Random
+Deducts **1 unit** (cost defined by on-chain `RandomCost`) and sends a `Request-Random` transfer to the protocol.
 
-To request random with your own provider pool:
-- Call `setProviderList` with a list of provider IDs as the `providerList` parameter to set your provider list pool.
-- Call `requestRandomFromProviders` with a `callbackId` parameter, this uses the set `Providers` list to request the value, allowing more control for the customer.
+```lua
+randomModule.requestRandom(callbackId)
+```
 
-These actions deduct **100 RandAO tokens** from the caller's account.
-### View Random
-To view the status of a random request:
-- Call `viewRandomStatus` with the `callbackId` you received from your `requestRandom` action.
-- Possible statuses:
-  - **PENDING**: The randomness request is in progress.
-  - **CACKING**: The randomness request is being computed.
-  - **SUCCESS**: The randomness request has been completed.
-  - **FAILED**: The randomness request failed.
+- **Arguments**:
+  - `callbackId` (string): Unique identifier to correlate the eventual response.
 
-> The expected time to complete a randomness request is approximately **10 seconds** and dropping fast as AO network improvements are made.
+---
+
+### 2. Request Random from Custom Providers
+First set your desired provider list, then request random using those providers.
+
+```lua
+randomModule.setProviderList(providerList)
+randomModule.requestRandomFromProviders(callbackId)
+```
+
+- **Arguments**:
+  - `providerList` (table of strings): List of provider IDs to use.  
+  - `callbackId` (string): Unique identifier for this request.
+
+---
+
+### 3. Prepay for Randomness Credits
+
+```lua
+randomModule.prepayForRandom(units)
+```
+
+Sends a token transfer to the configured `RandomProcess` to pre-pay for a specified number of future random requests.
+
+- **Arguments**:
+  - `units` (number): Number of randomness units to purchase.  
+- **Behavior**:
+  - Computes `quantity = units * RandomCost` (on-chain value).  
+  - Sends a `"Transfer"` action to `RandomProcess` with header `X-Prepayment = "true"`.  
+
+---
+
+### 4. Redeem Random Credit
+
+```lua
+randomModule.redeemRandomCredit(callbackId)
+-- or
+randomModule.redeemRandomCredit(callbackId, providerList)
+```
+
+Uses prepaid randomness credits to make a randomness request.
+
+- **Arguments**:
+  - `callbackId` (string): Unique identifier to correlate the response.  
+  - `providerList` (optional, table of strings): If provided, limits entropy generation to this subset of providers.  
+- **Behavior**:
+  - If `providerList` is **nil**, sends `Redeem-Random-Credit` with only `CallbackId`.  
+  - If provided, includes header `X-Providers = providerList`.  
+
+**Examples**:
+```lua
+-- Redeem credit without specifying providers:
+local tx1 = randomModule.redeemRandomCredit("cb-1234")
+
+-- Redeem credit using a custom provider list:
+local providers = {
+  "ProviderA_ID",
+  "ProviderB_ID"
+}
+local tx2 = randomModule.redeemRandomCredit("cb-5678", providers)
+print("Redeem tx:", tx2.TxId)
+```
+
+---
+
+### 5. View Random Status
+
+```lua
+randomModule.viewRandomStatus(callbackId)
+```
+
+Check the status of a previously submitted randomness request.
+
+- **Arguments**:
+  - `callbackId` (string): The callback ID from your request.  
+- **Possible Return Values**:
+  - `"PENDING"`: Your request is queued.  
+  - `"CACKING"`: Entropy is being computed/collected.  
+  - `"SUCCESS"`: Randomness is ready.  
+  - `"FAILED"`: The request did not complete successfully.  
 
 ---
 
 ## Code Examples
 
-### Using the RandAO Module
+```lua
+local randomModule = require('random')(json)
+randomModule.init()
 
-Setting up the module:
-```lua
-  local randomModule = require('random')(json)
-  randomModule.init()
-```
+-- Generate a unique callback ID:
+local cbId = randomModule.generateUUID()
 
-Setting custom provider list:
-```lua
-  local providerList = {
-      "XUo8jZtUDBFLtp5okR12oLrqIZ4ewNlTpqnqmriihJE",
-      "vJnpGjZrOetokWpgV50-xBxanCGP1N9Bjtj-kH1E_Ac",
-      "oFmKGpZpBB8TKI3qMyaJduRqe9mJ3kb98lS9xnfsFTA"
-  }
-  randomModule.setProviderList(providerList)
-```
-Generating a unique callbackId:
-```lua
-  local callbackId = randomModule.generateUUID()
+-- 1) Prepay for 3 random requests:
+randomModule.prepayForRandom(3)
+
+-- 2) Immediately redeem one of those credits:
+randomModule.redeemRandomCredit(cbId)
+
+-- 3) Later, check status:
+local status = randomModule.viewRandomStatus(cbId)
+print("Request status:", status)
 ```
 
-Requesting random from default provider pool:
-```lua
-  randomModule.requestRandom(callbackId)
-```
-
-Requesting random from custom provider pool:
-```lua
-  randomModule.requestRandomFromProviders(callbackId)
-```
-
-Basic handler for receiving random responses:
-```lua
-  Handlers.add(
-      "RandomResponse",
-      Handlers.utils.hasMatchingTag("Action", "RandomResponse"),
-      function(msg)
-        -- Process the random module’s response
-        local callbackId, entropy = randomModule.processRandomResponse(msg.From, msg.Data)
-        print("CallbackId: " .. tostring(callbackId) .. ", Entropy: " .. tostring(entropy))
-      end
-  )
-```
 ---
 
 ## License
@@ -104,8 +157,9 @@ This project is licensed under the **MIT License**. See the [LICENSE](LICENSE) f
 
 ## Contributing
 
-Contributions are welcome! If you'd like to improve this module, please:
-- Open an issue to report bugs or suggest features.
-- Submit a pull request with your changes.
+Contributions are welcome! To help improve this module:
+
+- Open an issue to report bugs or suggest features.  
+- Submit a pull request with clear tests and documentation updates.  
 
 Happy randomizing! 🎲
