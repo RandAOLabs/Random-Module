@@ -104,7 +104,6 @@ local providers = {
   "ProviderB_ID"
 }
 local tx2 = randomModule.redeemRandomCredit("cb-5678", providers)
-print("Redeem tx:", tx2.TxId)
 ```
 
 ---

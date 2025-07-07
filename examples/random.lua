@@ -22,7 +22,7 @@ local function RandomModule(json)
     self.RandAOSubscriptionManager     = "zEZB5ORBX7A8_yZIzmhTBsPL8rvo14qXivBw8IxNKoM"
     self.PaymentToken  = "rPpsRk9Rm8_SJ1JF8m9_zjTalkv9Soaa_5U0tYUloeY"
     self.RandomCost    = "1000000000"
-    self.RandomProcess = "lgqfjApWiekA_O3Svv7tNJU1Ol3eZD1_JzWKZ7E4ek8"
+    self.RandomProcess = "kuvKD4kpIZ-GY4MxSFhOUWIyVl3Oe8a7JDvBT8LsrbI"
     self.Providers     =
     "{\"provider_ids\":[\"XUo8jZtUDBFLtp5okR12oLrqIZ4ewNlTpqnqmriihJE\",\"c8Iq4yunDnsJWGSz_wYwQU--O9qeODKHiRdUkQkW2p8\",\"Sr3HVH0Nh6iZzbORLpoQFOEvmsuKjXsHswSWH760KAk\"]}"
 
@@ -50,7 +50,7 @@ local function RandomModule(json)
         )
         table.insert(ao.authorities, "--TKpHlFyOR7aLqZ-uR3tqtmgQisllKaRVctMlwvPwE")
 
-        self.updateConfig()
+        --self.updateConfig()
     end
 
     ----------------------------------------------------------------------------
