@@ -294,23 +294,7 @@ Handlers.add(
 
 
 function helper()
-    SweepstakesData["d6cce35c-487a-458f-bab2-9032c2621f38"] = {
-        EntryCount = 1,
-        Creator = "m1YSrJ08L6Nk9QCp7yMgrJD9x9nEVQ4usNJI7b-pzuM",
-        Details = json.encode(
-            {
-                name= "Meka IDs Whitelisting",
-                description= "Want a free mint for the upcoming Meka ID drop? We're giving 25 early access to a select few through our whitelist sweepstake!\n\nWinners will receive:\n\n✅ Guaranteed free mint in Phase 1\n✅ Early access to the Meka ID network\n✅ OG status in the Meka City ecosystem",
-                prize= "Whitelisting to free mint phase",
-                endDate="2025-05-20",
-                rules= "✅ How to Enter:\nFollow @Meka_Human on X\n\nLike & Retweet the sweepstake post\n\nTag 2 friends who should enter Meka IDs minting\n\n� Winners will be announced and added to entrant list here\nGood luck, citizen — your code awaits."
-              }
-        ),
-        Pulls = {},
-        Entries = {"Meka"},
-        PullCount = 0
-    }
-
+    random.showConfig()
 end
 
 print("Loaded Sweepstakes.lua")
