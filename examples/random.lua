@@ -50,7 +50,7 @@ local function RandomModule(json)
         )
         table.insert(ao.authorities, "--TKpHlFyOR7aLqZ-uR3tqtmgQisllKaRVctMlwvPwE")
 
-        --self.updateConfig()
+        self.updateConfig()
     end
 
     ----------------------------------------------------------------------------
