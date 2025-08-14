@@ -193,7 +193,7 @@ local function RandomModule(json)
     ----------------------------------------------------------------------------
     function self.requestRandom(callbackId)
         local send = ao.send({
-            Target = "rPpsRk9Rm8_SJ1JF8m9_zjTalkv9Soaa_5U0tYUloeY",
+            Target = self.PaymentToken,
             Action = "Transfer",
             Recipient = self.RandomProcess,
             Quantity = self.RandomCost,
