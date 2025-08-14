@@ -195,7 +195,7 @@ local function RandomModule(json)
         local send = ao.send({
             Target = "rPpsRk9Rm8_SJ1JF8m9_zjTalkv9Soaa_5U0tYUloeY",
             Action = "Transfer",
-            Recipient = "lgqfjApWiekA_O3Svv7tNJU1Ol3eZD1_JzWKZ7E4ek8",
+            Recipient = self.RandomProcess,
             Quantity = self.RandomCost,
             ["X-CallbackId"] = callbackId
         })
